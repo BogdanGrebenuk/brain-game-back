@@ -4,12 +4,10 @@ from dataclasses import dataclass
 @dataclass
 class CreateUserDto:
     id: str
+    username: str
     email: str
     password: str
-    first_name: str
-    last_name: str
-    patronymic: str
-    role: str
+    number: int
 
 
 @dataclass

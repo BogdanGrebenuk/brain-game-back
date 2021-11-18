@@ -2,7 +2,7 @@ import uuid
 
 from aiohttp import web
 
-from app.user.auth.dto import CreateUserDto, AuthenticateUserDto
+from app.auth.dto import AuthenticateUserDto, CreateUserDto
 
 
 async def authenticate_user(request, authenticator):
@@ -22,25 +22,26 @@ async def register_user(
         request,
         registrar,
         user_mapper,
-        user_transformer
+        auth_user_transformer,
+        user_number_generator
         ):
     body = await request.json()
+
+    user_number = await user_number_generator.generate()
 
     user = await registrar.register(
         CreateUserDto(
             id=str(uuid.uuid4()),
             email=body.get('email'),
             password=body.get('password'),
-            first_name=body.get('first_name'),
-            last_name=body.get('last_name'),
-            patronymic=body.get('patronymic'),
-            role=body.get('role')
+            username=body.get('username'),
+            number=user_number
         )
     )
 
     await user_mapper.create(user)
 
-    return web.json_response(await user_transformer.transform(user))
+    return web.json_response(await auth_user_transformer.transform(user))
 
 
 async def logout_user(request, user_mapper):

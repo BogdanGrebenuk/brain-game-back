@@ -86,6 +86,7 @@ async def additional_token_checker(request, handler, user_mapper):
         }, status=400)
 
     request['user_id'] = user_id
+    request['user'] = user
 
     return await handler(request)
 

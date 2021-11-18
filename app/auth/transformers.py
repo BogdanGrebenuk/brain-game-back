@@ -1,10 +1,9 @@
-from app.user.domain import User
 from app.utils.transformer import Transformer
 
 
-class UserTransformer(Transformer):
+class AuthUserTransformer(Transformer):
 
-    async def transform(self, user: User):
+    async def transform(self, user):
         return {
             "id": user.id,
             "username": user.username,

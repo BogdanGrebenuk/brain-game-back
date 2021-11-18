@@ -3,11 +3,15 @@ import logging
 from dependency_injector import containers, providers
 from dependency_injector.ext import aiohttp as ext_aiohttp
 
+from app.auth.containers import AuthPackageContainer
 from app.db import models
+from app.db.mappers.session import SessionMapper
 from app.db.mappers.user import UserMapper
+from app.game.containers import GamePackageContainer
+from app.game.domain.session import SessionStructure
 from app.middlewares import error_handler, create_jwt_middleware, request_logger, additional_token_checker
 from app.user.containers import UserPackageContainer
-from app.user.domain.entity import User
+from app.user.domain import User
 from app.utils.engine import init_engine
 from app.utils.executor import (
     Executor,
@@ -59,6 +63,13 @@ class MappersContainer(containers.DeclarativeContainer):
         engine=gateways.engine,
         model=models.User,
         entity_cls=User
+    )
+
+    session_mapper = providers.Singleton(
+        SessionMapper,
+        engine=gateways.engine,
+        model=models.Session,
+        entity_cls=SessionStructure
     )
 
 
@@ -120,5 +131,18 @@ class ApplicationContainer(containers.DeclarativeContainer):
         UserPackageContainer,
         application_utils=application_utils,
         mappers=mappers,
+    )
+
+    auth = providers.Container(
+        AuthPackageContainer,
+        application_utils=application_utils,
+        mappers=mappers,
         config=config
+    )
+
+    game = providers.Container(
+        GamePackageContainer,
+        mappers=mappers,
+        config=config,
+        application_utils=application_utils
     )

@@ -1,9 +1,9 @@
 from aiohttp.test_utils import AioHTTPTestCase, unittest_run_loop
 
+from app.auth.dto import AuthenticateUserDto
 from app.exceptions.application import DomainException
 from app.main import create_app
-from app.user.auth.dto import AuthenticateUserDto
-from app.user.domain.entity import User
+from app.user.domain import User
 from app.utils.mapper import EntityNotFound
 
 
@@ -15,22 +15,18 @@ WRONG_PASSWORD_EMAIL = "test_email_wrong_password@test.com"
 
 EXISTENT_USER = User(
     id="test_id",
-    first_name="kabab",
-    last_name="kabab",
-    patronymic="kabab",
+    username="kabab",
     email=EXISTENT_EMAIL,
     password="Test@123",
-    role="user"
+    number=1
 )
 
 WRONG_ANSWER_USER = User(
     id="test_id",
-    first_name="kabab",
-    last_name="kabab",
-    patronymic="kabab",
+    username="kabab",
     email=WRONG_PASSWORD_EMAIL,
     password="Test@123",
-    role="user"
+    number=2
 )
 
 
@@ -67,15 +63,15 @@ class AuthenticationTests(AioHTTPTestCase):
 
     async def setUpAsync(self):
         self.app.container.mappers.user_mapper.override(MockedUserMapper())
-        self.app.container.user.password_checker.override(MockedPasswordChecker())
+        self.app.container.auth.password_checker.override(MockedPasswordChecker())
 
     async def tearDownAsync(self):
         self.app.container.mappers.user_mapper.reset_override()
-        self.app.container.user.password_checker.reset_override()
+        self.app.container.auth.password_checker.reset_override()
 
     @unittest_run_loop
     async def test_successful_case(self):
-        authenticator = self.app.container.user.authenticator()
+        authenticator = self.app.container.auth.authenticator()
 
         token = await authenticator.authenticate(
             AuthenticateUserDto(
@@ -87,7 +83,7 @@ class AuthenticationTests(AioHTTPTestCase):
 
     @unittest_run_loop
     async def test_non_existent_email_case(self):
-        authenticator = self.app.container.user.authenticator()
+        authenticator = self.app.container.auth.authenticator()
 
         with self.assertRaises(EntityNotFound):
             await authenticator.authenticate(
@@ -98,7 +94,7 @@ class AuthenticationTests(AioHTTPTestCase):
 
     @unittest_run_loop
     async def test_wrong_password_case(self):
-        authenticator = self.app.container.user.authenticator()
+        authenticator = self.app.container.auth.authenticator()
 
         with self.assertRaises(DomainException):
             await authenticator.authenticate(

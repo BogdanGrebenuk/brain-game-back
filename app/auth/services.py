@@ -1,11 +1,11 @@
-import time
+import uuid
 
 import bcrypt
 import jwt
 
 from app.exceptions.application import DomainException
-from app.user.auth import schemas
-from app.user.domain.entity import User
+from app.auth import schemas
+from app.user.domain import User
 from app.utils.mapper import EntityNotFound
 
 
@@ -32,12 +32,10 @@ class Registrar:
 
         user = User(
             id=user_dto.id,
-            first_name=user_dto.first_name,
-            last_name=user_dto.last_name,
-            patronymic=user_dto.patronymic,
+            username=user_dto.username,
             email=user_dto.email,
             password=hashed_password,
-            role=user_dto.role
+            number=user_dto.number,
         )
 
         return user
@@ -138,9 +136,19 @@ class TokenGenerator:
         token = jwt.encode(
             {
                 **payload,
-                'exp': int(time.time()) + int(expiration_time)
+                'salt': str(uuid.uuid4())
             },
             secret,
             algorithm=algorithm
         )
         return token.decode(encoding='utf-8')
+
+
+class UserNumberGenerator:
+
+    def __init__(self, user_mapper):
+        self._user_mapper = user_mapper
+
+    async def generate(self):
+        users = await self._user_mapper.find_all()
+        return len(users) + 1

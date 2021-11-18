@@ -96,8 +96,8 @@ async def get_leaderboard(request, player_repository, leaderboard_transformer):
 async def compare_images(request, image_comparator):
     body = await request.json()
 
-    original_image = body.get('original_image')
-    drawn_image = body.get('drawn_image')
+    original_image = body.get('originalImage')
+    drawn_image = body.get('drawnImage')
 
     distance = await image_comparator.get_distance(original_image, drawn_image)
 

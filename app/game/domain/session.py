@@ -30,14 +30,14 @@ class Session:
     def move_to_the_next_stage(self, score=0):
         if not self.is_in_progress():
             return
-        if self._has_all_stages_completed():
-            return
 
         self._session_structure.total_score += score
-        self._session_structure.current_stage += 1
-
-        if self._has_all_stages_completed():
+        # is on last level
+        if self._session_structure.current_stage == (self._set_of_games.get_amount_of_stages() - 1):
             self._session_structure.status = SessionStatus.FINISHED
+            return
+
+        self._session_structure.current_stage += 1
 
     def close_session_due_to_failure(self):
         if not self.is_in_progress():
@@ -48,9 +48,6 @@ class Session:
         if not self.is_in_progress():
             return
         self._session_structure.status = SessionStatus.CANCELED
-
-    def _has_all_stages_completed(self):
-        return self._session_structure.current_stage == self._set_of_games.get_amount_of_stages()
 
     def get_status(self):
         return self._session_structure.status

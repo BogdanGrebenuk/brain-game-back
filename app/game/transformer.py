@@ -22,19 +22,19 @@ class PlayerTransformer(Transformer):
     async def transform_session_data(self, player):
         if player.has_any_session():
             data = {
-                'session_id': player.get_last_session_id(),
-                'session_status': player.get_last_session_status(),
-                'session_stage': player.get_last_session_stage(),
-                'session_total_score': player.get_last_session_total_score(),
-                'session_difficulty': player.get_last_session_difficulty()
+                'sessionId': player.get_last_session_id(),
+                'sessionStatus': player.get_last_session_status(),
+                'sessionStage': player.get_last_session_stage(),
+                'sessionTotalScore': player.get_last_session_total_score(),
+                'sessionDifficulty': player.get_last_session_difficulty()
             }
         else:
             data = {
-                'session_id': None,
-                'session_status': None,
-                'session_stage': None,
-                'session_total_score': None,
-                'session_difficulty': None
+                'sessionId': None,
+                'sessionStatus': None,
+                'sessionStage': None,
+                'sessionTotal_score': None,
+                'sessionDifficulty': None
             }
         return await self.transform(data)
 
@@ -43,7 +43,7 @@ class PlayerTransformer(Transformer):
         return {
             'username': player.get_username(),
             'email': player.get_email(),
-            'total_score': 0 if best_attempt is None else best_attempt.get_total_score(),
-            'passed_all_games': False if best_attempt is None else best_attempt.is_finished(),
+            'totalScore': 0 if best_attempt is None else best_attempt.get_total_score(),
+            'passedAllGames': False if best_attempt is None else best_attempt.is_finished(),
             'number': player.get_user_number()
         }

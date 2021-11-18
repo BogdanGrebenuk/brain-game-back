@@ -10,3 +10,4 @@ nest_asyncio
 aiohttp_jwt
 pyyaml
 aiohttp_cors
+six==1.15.0

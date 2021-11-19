@@ -1,7 +1,5 @@
 from marshmallow import (Schema, fields, validate)
 
-from app.user.domain import UserRole
-
 
 class CreateUserSchema(Schema):
     id = fields.String(required=True)

@@ -2,7 +2,7 @@ from aiohttp import web
 from aiohttp_jwt import JWTMiddleware
 from marshmallow import ValidationError
 
-from app.exceptions.application import AppException
+from app.exceptions.application import AppException, DomainException
 from app.utils.mapper import EntityNotFound
 
 
@@ -39,6 +39,11 @@ async def error_handler(request, handler):
             'error': e.message,
             'payload': e.payload
         }, status=404)
+    except DomainException as e:
+        return web.json_response({
+            'error': e.message,
+            'payload': e.payload
+        }, status=400)
     except AppException as e:
         return web.json_response({
             'error': e.message,

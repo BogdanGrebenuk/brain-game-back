@@ -46,8 +46,8 @@ class Player:
     def move_to_the_next_stage_of_last_session(self, score=0):
         self.last_session.move_to_the_next_stage(score)
 
-    def close_last_session_due_to_failure(self):
-        self.last_session.close_session_due_to_failure()
+    def close_last_session_due_to_failure(self, score):
+        self.last_session.close_session_due_to_failure(score)
 
     def cancel_last_session(self):
         self.last_session.cancel_session()

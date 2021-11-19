@@ -54,10 +54,11 @@ async def complete_stage(request, player_repository, player_transformer):
 
 async def close_session_due_to_failure(request, player_repository, player_transformer):
     user_id = request['user_id']
+    body = await request.json()
 
     player = await player_repository.get(user_id)
 
-    player.close_last_session_due_to_failure()
+    player.close_last_session_due_to_failure(body['score'])
 
     await player_repository.save(player)
 

@@ -39,9 +39,10 @@ class Session:
 
         self._session_structure.current_stage += 1
 
-    def close_session_due_to_failure(self):
+    def close_session_due_to_failure(self, score):
         if not self.is_in_progress():
             return
+        self._session_structure.total_score += score
         self._session_structure.status = SessionStatus.FAILED
 
     def cancel_session(self):

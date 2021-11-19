@@ -16,19 +16,210 @@
 - Manipulating user game sessions 🔍
   - starting new game session 📱
   - moving user to the next stages of the game 🔝
-  - finishing existing session due to completion/failure 👍
+  - finishing existing session due to completion/failure 👍/👎
   - canceling session 🛑
 - Comparing images for similarity (as part of one mini-game) 👀
 
-### External API used:
+### External API used
 [DeepAI API](https://deepai.org/machine-learning-model/image-similarity) has been used for comparing images and figuring out its similarity.
 
-### Project structure
-Domain-related code base is split into three packages:
-- auth package (for auth flow)
-- user package (for user-related flow)
-- game package (for game-related flow)
+### API
+```
+Action: Register user
+  
+Route: /register
+  
+Method: POST
 
+Body fields:
+- email: string
+- username: string
+- password: string
+
+Response:
+- id: string
+- username: string
+- email: string
+- number: integer
+```
+
+```
+Action: Authenticate user
+
+Route: /login
+
+Method: POST
+
+Body fields:
+- email: string
+- password: string
+
+Response:
+- token: string
+```
+
+```
+Action: Logout user
+
+Route: /logout
+
+Method: POST
+
+Headers:
+- Authorization: Bearer <token>
+```
+
+
+```
+Action: Get "me" info
+
+Route: /api/users/me
+
+Method: GET
+
+Headers:
+- Authorization: Bearer <token>
+
+Response:
+- id: string
+- username: string
+- email: string
+- number: integer
+```
+
+```
+Action: Get info about last session
+
+Route: /api/sessions/last
+
+Method: GET
+
+Headers:
+- Authorization: Bearer <token>
+
+Response:
+- sessionId: string|null (null in the case of the absence of any session)
+- sessionStatus: integer|null 
+- sessionStage: integer|null
+- sessionTotalScore: integer|null
+- sessionDifficulty: integer|null
+```
+
+```
+Action: Start new session
+
+Route: /api/sessions
+
+Method: POST
+
+Headers:
+- Authorization: Bearer <token>
+
+Response:
+- sessionId: string
+- sessionStatus: integer 
+- sessionStage: integer
+- sessionTotalScore: integer
+- sessionDifficulty: integer
+```
+
+```
+Action: Notify about stage completion
+
+Route:  /api/sessions/last/complete
+
+Method: POST
+
+Headers:
+- Authorization: Bearer <token>
+
+Body:
+- score: integer
+
+Response:
+- sessionId: string
+- sessionStatus: integer 
+- sessionStage: integer
+- sessionTotalScore: integer
+- sessionDifficulty: integer
+```
+
+```
+Action: Notify about failure
+
+Route: /api/sessions/last/close
+
+Method: POST
+
+Headers:
+- Authorization: Bearer <token>
+
+Body:
+- score: integer
+
+Response:
+- sessionId: string
+- sessionStatus: integer 
+- sessionStage: integer
+- sessionTotalScore: integer
+- sessionDifficulty: integer
+```
+
+```
+Action: Cancel session
+
+Route: /api/sessions/last/cancel
+
+Method: POST
+
+Headers:
+- Authorization: Bearer <token>
+
+Response:
+- sessionId: string
+- sessionStatus: integer 
+- sessionStage: integer
+- sessionTotalScore: integer
+- sessionDifficulty: integer
+```
+
+```
+Action: Get leaderboard
+
+Route: /api/leaderboard
+
+Method: GET
+
+Headers:
+- Authorization: Bearer <token>
+
+Response:
+- <position>:string : {
+      username: string, 
+      email: string, 
+      totalScore: integer, 
+      totalScore: boolean,
+      number: integer
+  }
+```
+
+```
+Action: Compare images
+
+Route: /api/images/compare
+
+Method: POST
+
+Headers:
+- Authorization: Bearer <token>
+
+Body:
+- originalImage: string (base64)
+- drawnImage: string (base64)
+
+Response: 
+- distance: integer
+```
 
 ### Deployment
 1. Install PostgreSQL server (PostgreSQL 12.9 is recommended)
